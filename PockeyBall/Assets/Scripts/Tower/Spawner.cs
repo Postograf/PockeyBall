@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    [Header("Coin spawn")]
+    [SerializeField] private CoinSpawner _coinSpawner;
+    [SerializeField] private Vector3 _coinOffset;
+    [SerializeField] private float _coinChance;
+    [SerializeField] private int _coinCount;
+
+    [Header("Tower spawn")]
     [SerializeField] private Segment _segmentPrefab;
     [SerializeField] private Block _blockPrefab;
     [SerializeField] private Finish _finish;
@@ -21,6 +28,9 @@ public class Spawner : MonoBehaviour
         {
             currentObject = BuildObject(currentObject, _segmentPrefab.gameObject);
             currentObject = BuildObject(currentObject, _blockPrefab.gameObject);
+
+            if (_towerCount > i + 1 && Random.Range(0, 100) <= _coinChance)
+                _coinSpawner.Spawn(currentObject.transform.position + _coinOffset, _coinCount);
         }
 
         BuildObject(currentObject, _finish.gameObject);
@@ -31,7 +41,8 @@ public class Spawner : MonoBehaviour
         return Instantiate(
             nextObject,
             GetBuildPoint(currentObject.transform, nextObject.transform),
-            Quaternion.identity
+            Quaternion.identity,
+            transform
         );
     }
 
